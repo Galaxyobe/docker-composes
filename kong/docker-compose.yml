@@ -97,9 +97,9 @@ services:
     # volumes:
     #   - kong_log: ${KONG_LOG:-/usr/local/kong/log}
     ports:
-      - "8000:8000/tcp"
+      - "${KONG_PROXY_HTTP:-8000}:8000/tcp"
       - "8001:8001/tcp"
-      - "8443:8443/tcp"
+      - "${KONG_PROXY_HTTPS:-8443}:8443/tcp"
       - "8444:8444/tcp"
     healthcheck:
       test: ["CMD", "kong", "health"]
@@ -136,9 +136,10 @@ services:
       DB_PASSWORD: ${KONGA_PG_PASSWORD:-kong}
       TOKEN_SECRET: ${KONGA_TOKEN_SECRET:-km2GUr4RkcQD7DewhJPNXrCuZwcKmqjb}
       NODE_ENV: ${KONGA_NODE_ENV:-production}
+      BASE_URL: ${KONGA_BASE_URL}
     links:
       - db
     depends_on:
       - db
     ports:
-      - "${KONGA_PORT:-0.0.0.0:1337}:1337"
+      - "${KONGA_PORT:-1337}:1337"
