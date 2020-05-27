@@ -1,16 +1,36 @@
-version: "3.1"
+version: "3.7"
+
+volumes:
+  postgres_data:
+    name: ${POSTGRES_DATA:-postgres_data}
+    external: ${POSTGRES_DATA_EXTERNAL:-false}
+
+# secrets:
+#   kong_postgres_password:
+#     file: ./POSTGRES_PASSWORD
 
 services:
   db:
-    image: postgres
-    container_name: postgres
-    restart: always
+    image: "${POSTGRES_DOCKER_TAG:-postgres:latest}"
+    container_name: ${POSTGRES_NANE:-postgres-latest}
+    restart: on-failure
+    deploy:
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
     environment:
-      POSTGRES_PASSWORD: postgres
-
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: always
+      PGDATA: ${PGDATA:-/var/lib/postgresql/data}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    # secrets:
+    #   - kong_postgres_password
     ports:
-      - 8080:8080
+      - "5432:5432/tcp"
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d
+      - postgres_data:${PGDATA:-/var/lib/postgresql/data}
