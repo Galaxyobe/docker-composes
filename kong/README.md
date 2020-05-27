@@ -48,22 +48,12 @@ https://github.com/Galaxyobe/docker-composes/tree/master/kong
    服务名称：kong-admin-api
 
    ```
-   curl --location --request POST 'http://localhost:8001/services/' \
-   --header 'Content-Type: application/json' \
-   --data-raw '{
-       "name": "kong-admin-api",
-       "host": "localhost",
-       "port": 8001
-   }'
+   curl -X POST -H Content-Type:application/json -d '{"name": "kong-admin-api","host": "localhost","port": 8001}' http://localhost:8001/services/
    ```
 
 2. 新建管理 API 路由
    ```
-   curl --location --request POST 'http://localhost:8001/services/kong-admin-api/routes' \
-   --header 'Content-Type: application/json' \
-   --data-raw '{
-       "paths": ["/kong-admin-api"]
-   }'
+   curl -X POST -H Content-Type:application/json -d '{"paths": ["/kong-admin-api"]}' http://localhost:8001/services/kong-admin-api/routes
    ```
 3. API 服务启用 KeyAuth
    ```
@@ -107,15 +97,8 @@ https://github.com/Galaxyobe/docker-composes/tree/master/kong
 1. 新建管理 API 服务
 
    服务名称：konga
-
    ```
-   curl --location --request POST 'http://localhost:8001/services/' \
-   --header 'Content-Type: application/json' \
-   --data-raw '{
-       "name": "konga",
-       "host": "konga",
-       "port": 1337
-   }'
+   curl -X POST -H Content-Type:application/json -d '{"name": "konga","host": "konga","port": 1337}' http://localhost:8001/services/
    ```
 
 2. 新建管理 API 路由
@@ -124,10 +107,6 @@ https://github.com/Galaxyobe/docker-composes/tree/master/kong
    127.0.0.1 admin.kong.io
    ```
    ```
-   curl --location --request POST 'http://localhost:8001/services/konga/routes' \
-   --header 'Content-Type: application/json' \
-   --data-raw '{
-       "hosts": ["admin.kong.io"]
-   }'
+   curl -X POST -H Content-Type:application/json -d '{"hosts": ["admin.kong.io"]}' http://localhost:8001/services/konga/routes
    ```
    就可以使用 http://admin.kong.io 访问服务 KONGA
