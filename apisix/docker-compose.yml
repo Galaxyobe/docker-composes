@@ -1,0 +1,46 @@
+version: "3"
+
+networks:
+  net:
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.2.0.0/24
+
+services:
+  etcd:
+    image: "${ETCD_DOCKER_TAG:-bitnami/etcd:3.3.13-r80}"
+    container_name: ${APISIX_CONTAINER_NAME:-etcd-server}
+    restart: always
+    volumes:
+      # - /etc/localtime:/etc/localtime
+      - ${ETCD_DATA:-./data/etcd}:/etcd_data
+      - ${ETCD_CONFIGFILE:-./conf/etcd.conf.yml}:/opt/bitnami/etcd/conf/etcd.conf.yml
+    environment:
+      - TIME_ZONE=Asia/Shanghai
+      - ETCD_DATA_DIR=/etcd_data
+      - ALLOW_NONE_AUTHENTICATION=yes
+    ports:
+      - "2379:2379/tcp"
+      - "2380:2380/tcp"
+    networks:
+      net:
+        ipv4_address: 172.2.0.10
+  apisix:
+    image: "${APISIX_DOCKER_TAG:-apache/apisix:1.2-alpine}"
+    container_name: ${APISIX_CONTAINER_NAME:-apisix}
+    restart: always
+    volumes:
+      # - /etc/localtime:/etc/localtime
+      - ${APISIX_LOGS:-./logs}:/usr/local/apisix/logs
+      - ${APISIX_CONFIGFILE:-./conf/config.yaml}:/usr/local/apisix/conf/config.yaml:ro
+    environment:
+      - TIME_ZONE=Asia/Shanghai
+    depends_on:
+      - etcd
+    ports:
+      - "${APISIX_PROXY_HTTP:-9080}:9080/tcp"
+      - "${APISIX_PROXY_HTTPS:-9443}:9443/tcp"
+    networks:
+      net:
+        ipv4_address: 172.2.0.11
