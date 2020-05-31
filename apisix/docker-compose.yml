@@ -3,9 +3,9 @@ version: "3"
 networks:
   net:
     ipam:
-     driver: default
-     config:
-       - subnet: 172.2.0.0/24
+      driver: default
+      config:
+        - subnet: 172.2.0.0/24
 
 services:
   etcd:
@@ -41,6 +41,8 @@ services:
     ports:
       - "${APISIX_PROXY_HTTP:-9080}:9080/tcp"
       - "${APISIX_PROXY_HTTPS:-9443}:9443/tcp"
+      - "${APISIX_PROXY_TCP:-7000}:7000/tcp"
+      - "${APISIX_PROXY_UDP:-6000}:6000/udp"
     networks:
       net:
         ipv4_address: 172.2.0.11

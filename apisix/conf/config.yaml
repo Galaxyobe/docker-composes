@@ -60,9 +60,9 @@ apisix:
     ssl: 'radixtree_sni'          # radixtree_sni: match route by SNI(base on radixtree)
   stream_proxy:                 # TCP/UDP proxy
     tcp:                        # TCP proxy port list
-      - 8000
-    udp:                        # UDP proxy port list
       - 7000
+    udp:                        # UDP proxy port list
+      - 6000
 
   dns_resolver:                   # default DNS resolver, with disable IPv6 and enable local DNS
     - 127.0.0.11
